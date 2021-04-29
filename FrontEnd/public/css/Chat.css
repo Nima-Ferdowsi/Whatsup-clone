@@ -226,7 +226,7 @@ body {
     display: block;
   }
   .add-chat{
-    position: absolute;
+    position: fixed;
     bottom: 4vw;
     right: 4vw;
   }

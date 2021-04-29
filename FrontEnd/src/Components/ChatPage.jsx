@@ -13,11 +13,13 @@ const ChatPage = () => {
 
   const chatRef = useRef(null);
   const chatListRef = useRef(null);
+  const addChatBtn = useRef(null);
 
   const openChatList = () => {
     chatListRef.current.style.flex = "1";
     chatListRef.current.style.right = "0";
     chatListRef.current.style.width = "100vw";
+    addChatBtn.current.style.display='block'
   };
   const closeChat = () => {
     chatRef.current.style.left = "1000px";
@@ -31,6 +33,8 @@ const ChatPage = () => {
     chatListRef.current.style.flex = "0";
     chatListRef.current.style.right = "1000vw";
     chatListRef.current.style.width = "0";
+    addChatBtn.current.style.display='none'
+
   };
   const openChat = () => {
     if (getWidth <= 700) {
@@ -67,6 +71,8 @@ if(user.length!==0){
   } else {
     chatRef.current.style.flex = "0";
     chatListRef.current.style.flex = "1";
+    addChatBtn.current.style.display='block'
+
     chatRef.current.style.left = "1000vw";
     chatListRef.current.style.right = "0";
     chatListRef.current.style.width = "100vw";
@@ -89,7 +95,7 @@ return (
       <link rel="stylesheet" href="/css/Chat.css" />
     </Helmet>
     <div className="chat-container">
-      <Sidebar sidebarRef={chatListRef} openChat={openChat} />
+      <Sidebar sidebarRef={chatListRef} addChatBtn={addChatBtn} openChat={openChat} />
       <Chat chatRef={chatRef} closeChat={closeChat} />
     </div>
   </Fragment>

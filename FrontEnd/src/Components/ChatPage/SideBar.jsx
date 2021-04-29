@@ -194,6 +194,7 @@ setTimeout(() => {
           onClick={() => setSidebarContentType(!sidebarContentType)}
           aria-label="add"
           className="add-chat"
+          ref={props.addChatBtn}
         >
           <AddIcon />
         </Fab>
