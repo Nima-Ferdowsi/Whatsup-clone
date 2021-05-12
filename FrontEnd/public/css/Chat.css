@@ -188,6 +188,7 @@ body {
 @media only screen and (max-width: 700px) {
   body {
     display: block;
+    overflow-x: hidden;
   }
 
   .sidebar {
@@ -215,7 +216,11 @@ body {
   .chat-header {
     padding: 2px;
     height:12%;
-   
+    position: sticky;
+    top: 0;
+    z-index:100;
+    width: 100%;
+  
   }
   .chat-header-info > h3 {
     font-size:16px;
@@ -224,6 +229,11 @@ body {
   }
   .back-icon{
     display: block;
+  }
+  .chat-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
   }
   .add-chat{
     position: fixed;

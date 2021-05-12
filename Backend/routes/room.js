@@ -1,5 +1,5 @@
 const { newRoom, deleteRoom, getAllRooms } = require("../controller/room");
-const { newMessage, getMessage } = require("../controller/messages");
+const { newMessage, getMessage, removeMessage } = require("../controller/messages");
 
 const Room = require("../model/room");
 const randomid = require("crypto");
@@ -21,6 +21,7 @@ route.post("/rooms/delete-room", async (req, res) => {
 //new message route
 route.post("/rooms/new-msg", newMessage);
 route.post("/rooms/get-msg",getMessage)
+route.post("/rooms/remove-msg",removeMessage)
 
 
 

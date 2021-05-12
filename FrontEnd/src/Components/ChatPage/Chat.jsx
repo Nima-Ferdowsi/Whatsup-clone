@@ -16,8 +16,13 @@ import { getChat } from "./../../action/chat";
 const Chat = (props) => {
   const msg = useSelector((state) => state.chat);
 
+   const chatRef=useRef(null)
+
+//get login user id
   const userID = getLocal("user").result._id;
+
   const dispatch = useDispatch();
+
   let name;
   if (typeof msg.contact !== "undefined") {
     name = msg.contact.user;
@@ -34,19 +39,21 @@ const Chat = (props) => {
     messages = [];
   }
 
+
   useEffect(() => {
     var pusher = new Pusher("f1aaf06bf13b9df96407", {
       cluster: "eu",
     });
 
     var channel = pusher.subscribe("Message");
-    channel.bind("inserted", function (data) {
-      console.log(data.message);
+    channel.bind("inserted",  ()=> {
 
-      console.log(msg);
       dispatch(getChat(msg.room, msg.contact, msg.room));
     });
+   channel.bind("deleted",  ()=> {
 
+      dispatch(getChat(msg.room, msg.contact, msg.room));
+    });
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
@@ -57,10 +64,10 @@ const Chat = (props) => {
   const cheackMessage = (elem) => {
     if (userID === elem.messages.from.id) {
       return (
-        <ChatMessage messageClass="chat-reciever" txt={elem.messages.txt} />
+        <ChatMessage id={elem._id} messageClass="chat-reciever" txt={elem.messages.txt} name={elem.messages.from.name}/>
       );
     } else {
-      return <ChatMessage txt={elem.messages.txt} />;
+      return <ChatMessage id={elem._id}  txt={elem.messages.txt} name={elem.messages.from.name}/>;
     }
   };
 
@@ -89,7 +96,7 @@ const Chat = (props) => {
           </IconButton>
         </div>
       </div>
-      <div className="chat-body">
+      <div className="chat-body" ref={chatRef}>
         {typeof msg.contact !== "undefined" ? (
           <Fragment>{messages.map((elem) => cheackMessage(elem))}</Fragment>
         ) : null}

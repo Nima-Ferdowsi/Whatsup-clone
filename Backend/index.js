@@ -63,10 +63,11 @@ if(change.operationType==='insert'){
       });
  
 }
- 
-  
-      
-
+if(change.operationType==='delete'){    
+  pusher.trigger("Message", "deleted",{
+    message:''
+  })
+}
 }); 
  
 })  
@@ -81,7 +82,7 @@ app.use(room)
 //End of Routes
 
 //Database(connect to database)
-connectDb(process.env.CLUSTER_URI)
+connectDb(process.env.TEST_CLUSTER)
 //End of database
  
 const Port=process.env.Port||5000

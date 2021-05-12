@@ -36,3 +36,14 @@ export const newMessage=async (msg)=>{
   });
 
 }
+export const removeMsg=async (msg)=>{
+  fetch(`${server}/rooms/remove-msg`, {
+   method: "POST",
+   body: JSON.stringify(msg),
+   headers: {
+     "Content-Type": "application/json",
+     Accept: "application/json",
+   },
+ });
+
+}
