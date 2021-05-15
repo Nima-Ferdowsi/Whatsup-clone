@@ -1,1 +1,1 @@
-{ "server": "http://localhost:3000" }
+{ "server": "https://react-whatsapp-clone.herokuapp.com" , "local":"http://localhost:3000"}

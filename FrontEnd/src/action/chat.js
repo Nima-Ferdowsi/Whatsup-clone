@@ -12,7 +12,7 @@ export const getChat = (room,contact, id) => {
     const res =await req.json();
 
     const data = { room, contact,  res };
-
+console.log(data);
     dispatch({ type: "get_Messages", payLoad: data });
   };
 };

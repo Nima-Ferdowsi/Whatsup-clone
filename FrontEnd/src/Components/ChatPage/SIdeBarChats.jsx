@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import { useDispatch } from "react-redux";
-
+import { server } from "../../config/config.json";
 import { newRooms } from "../../action/rooms";
 import { getChat } from './../../action/chat';
 import { reciverInfo } from './../../utils/chat';
@@ -15,7 +15,7 @@ const SideBarChats = (props) => {
 
   const name = reciverInfo('name',props.title,props);
   const chatId = reciverInfo('roomId',props.title,props);
-
+const avatar= reciverInfo('avatar',props.title,props);
   const newRoom = async () => {
     if (props.types == "users") {
       const me = await JSON.parse(localStorage.getItem("user"));
@@ -23,8 +23,8 @@ const SideBarChats = (props) => {
       dispatch(
         newRooms({
           users: [
-            { id: props.id, user: props.title },
-            { id: me.result._id, user: me.result.firstname },
+            { id: props.id, user: props.title,avatar:props.avatar },
+            { id: me.result._id, user: me.result.firstname ,avatar:me.result.avatar },
           ],
         })
       );
@@ -32,11 +32,24 @@ const SideBarChats = (props) => {
     }
 
     else{
-      dispatch(getChat(reciverInfo('roomId',props.title,props),reciverInfo('user',props.title,props),chatId))
+      const roomId=reciverInfo('roomId',props.title,props)
+      const userAvatar=reciverInfo('avatar',props.title,props)
+      console.log(props.title);
+      dispatch(getChat(roomId,reciverInfo('user',props.title,props),chatId))
       props.openChat()
     } 
   };
 
+  const avatarLogic=()=>{
+    if (props.types == "users") {
+    
+    return props.avatar
+    }
+
+    else{
+     return avatar 
+    }
+  }
 
   return (
     <div
@@ -45,7 +58,7 @@ const SideBarChats = (props) => {
       className="sidebarChat"
       onClick={newRoom}
     >
-      <Avatar alt={name} src={name} />
+      <Avatar alt={name} src={`${server}/uploads/${avatarLogic()}`} />
       <div className="sidebar-chats-info">
         <h2>{name}</h2>
         <p>This is the last message</p>

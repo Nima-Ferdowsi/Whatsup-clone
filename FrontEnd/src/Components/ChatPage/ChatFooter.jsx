@@ -19,9 +19,11 @@ const sendMsg=(e)=>{
   e.preventDefault()
 
 if('room' in msg){
+ if(inputRef.current.value!==''){
   const obj={roomId:msg.room,msg:{from:{id:user.result._id,name:user.result.firstname},txt:inputRef.current.value}}
-newMessage(obj)
-inputRef.current.value=''
+  newMessage(obj)
+  inputRef.current.value=''
+ }
 }
 else{
   toast.warning('choose your room first please')

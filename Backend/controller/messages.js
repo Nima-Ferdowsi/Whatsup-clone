@@ -20,13 +20,9 @@ exports.getMessage = (req, res, next) => {
 };
 
 exports.removeMessage = (req, res, next) => {
-  console.log(req.body._id);
   Msg.deleteOne({_id:req.body._id},(err)=>{
     if(err){
       console.log(err);
-    }
-    else{
-      console.log("object");
     }
   } );
 };

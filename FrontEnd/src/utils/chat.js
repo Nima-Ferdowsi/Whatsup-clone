@@ -8,6 +8,7 @@ export const reciverInfo = (type,list,props) => {
       (elem) => elem.id !== storage.result._id
     );
 
+
    switch (type) {
      case 'name':
       return list[0].users[index].user
@@ -15,7 +16,9 @@ export const reciverInfo = (type,list,props) => {
         return list[0].users[index]
       case 'roomId':
         return list[0].roomId
-   }
+        case 'avatar':
+          return list[0].users[index].avatar
+        }
   }
  }
  else{

@@ -26,7 +26,6 @@ exports.newRoom = (req, res, next) => {
           User.findById(elem.id).then((data2) => {
             data2.room.push(data.roomId);
             data2.save();
-            console.log(data2);
           });
         });  
         res.status(201).send(data);

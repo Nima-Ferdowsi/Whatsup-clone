@@ -59,7 +59,6 @@ const ChatPage = () => {
     };
   }, []);
   useEffect(() => {
-    console.log(getWidth);
 if(user.length!==0){
   if (getWidth >= 701) {
     chatRef.current.style.flex = "0.65";
@@ -97,6 +96,7 @@ return (
     <div className="chat-container">
       <Sidebar sidebarRef={chatListRef} addChatBtn={addChatBtn} openChat={openChat} />
       <Chat chatRef={chatRef} closeChat={closeChat} />
+      
     </div>
   </Fragment>
 );

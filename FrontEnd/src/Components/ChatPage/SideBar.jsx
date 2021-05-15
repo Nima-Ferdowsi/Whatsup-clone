@@ -22,6 +22,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { withRouter } from 'react-router-dom';
+import UploadModal from "./uploadAvatarModal";
 
 const login = (user) => {
   fetch(`${server}/login`, {
@@ -45,14 +46,20 @@ const login = (user) => {
 };
 
 const Sidebar = (props) => {
+  //state to change content(true:user , false: rooms)
   const [sidebarContentType, setSidebarContentType] = useState(true);
+
   const [diffrentUsers, setDiffrent] = useState([]);
   const [myRooms, setMyRooms] = useState([]);
   const rooms = useSelector((state) => state.roomReducer);
-  const user = useSelector((state) => state.userList);
+  const users = useSelector((state) => state.userList);
+  const [openUpload,setUpload]=useState(false)
   const dispatch = useDispatch();
 
-  console.log(rooms);
+
+  let avatar;
+  //user that loged in that is in localstorage
+  const user = getLocal("user");
 
   useEffect(async () => {
     //get rooms
@@ -60,19 +67,19 @@ const Sidebar = (props) => {
     //get users
     await dispatch(getUsers());
 
-    const data = getLocal("user");
     //login when page loaded because users room shoud update
-    if (data) {
-      login({ email: data.result.email, pass: data.result.pass });
+    if (user) {
+      login({ email: user.result.email, pass: user.result.pass });
+
     }
   }, []);
 
   useEffect(() => {
     //show me other users not me in add new room section
-    const me = getLocal('user').result._id;
-    const news = user.filter((elem) => elem._id !== me);
-    setDiffrent(news);
-  }, [user]);
+    const me = user.result._id;
+    const otherUsers = users.filter((elem) => elem._id !== me);
+    setDiffrent(otherUsers);
+  }, [users]);
 
   useEffect(() => {
 setTimeout(() => {
@@ -125,6 +132,7 @@ setTimeout(() => {
   const closeMenu = () => {
     setAnchorEl(null);
   };
+  //logout
   const logout=()=>{
     localStorage.removeItem('user')
     props.history.push('/login')
@@ -132,7 +140,7 @@ setTimeout(() => {
   return (
     <div className="sidebar" ref={props.sidebarRef}>
       <div className="sidebar-header">
-        <Avatar />
+        <Avatar src={`${server}/uploads/${user.result.avatar}`} />
         <div className="header-right">
           <IconButton>
             <DonutLargeIcon />
@@ -156,6 +164,12 @@ setTimeout(() => {
                   <SendIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="LOGOUT" />
+              </StyledMenuItem>
+              <StyledMenuItem  onClick={()=>{setUpload(true) ; closeMenu()}}>
+                <ListItemIcon>
+                  <SendIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Avatar" />
               </StyledMenuItem>
             </StyledMenu>
           </IconButton>
@@ -185,6 +199,7 @@ setTimeout(() => {
                 <SideBarChats
                   title={elem.firstname}
                   id={elem._id}
+                  avatar={elem.avatar}
                   types="users"
                   setOpen={setSidebarContentType}
                 />
@@ -199,6 +214,7 @@ setTimeout(() => {
           <AddIcon />
         </Fab>
       </div>
+      <UploadModal open={openUpload} close={setUpload}/>
     </div>
   );
 };

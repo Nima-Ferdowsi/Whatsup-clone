@@ -25,6 +25,10 @@ const userSchema=new mongoose.Schema({
         required: true,
         maxlength: 255,
     },
+    avatar:{
+        type:String,
+        default:'',
+    },
     room:[],
     createdAt: {
         type: Date,

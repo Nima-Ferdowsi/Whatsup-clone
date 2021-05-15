@@ -13,6 +13,7 @@ import { Fragment } from "react";
 import { getLocal } from "../../utils/localstorage";
 import Pusher from "pusher-js";
 import { getChat } from "./../../action/chat";
+import { server } from "../../config/config.json";
 const Chat = (props) => {
   const msg = useSelector((state) => state.chat);
 
@@ -24,8 +25,10 @@ const Chat = (props) => {
   const dispatch = useDispatch();
 
   let name;
+  let avatar;
   if (typeof msg.contact !== "undefined") {
     name = msg.contact.user;
+    avatar=msg.contact.avatar;
   } else {
     name = "Room";
   }
@@ -77,7 +80,7 @@ const Chat = (props) => {
         <div className="back-icon">
           <ArrowBackIcon onClick={props.closeChat} />
         </div>
-        <Avatar />
+        <Avatar src={`${server}/uploads/${avatar}`} alt={name} />
         <div className="chat-header-info">
           <h3>{name}</h3>
           <p>last seean at...</p>

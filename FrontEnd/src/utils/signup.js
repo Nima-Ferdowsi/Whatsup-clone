@@ -33,7 +33,6 @@ const SignUpBtn = (props) => {
     })
       .then((data) => data.json())
       .then((data) => {
-        console.log(data);
         if (data.message == "succses") {
           props.history.push("/login");
         } else if (data.message == "exist") {

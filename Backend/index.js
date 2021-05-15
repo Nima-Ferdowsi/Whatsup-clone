@@ -4,10 +4,12 @@ const user = require('./routes/user');
 const room = require('./routes/room');
 const mongoose=require('mongoose');
 const Pusher=require('pusher');
+const path=require('path');
 
 const connectDb = require('./database/db');
 const Room = require('./model/room');
 const Msg = require('./model/messages');
+const bodyParser = require('body-parser');
 
 
 
@@ -15,9 +17,14 @@ const app=express()
 dotEnv.config({path:'./config/config_env.env'})
 
 
-app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.urlencoded({extended:true, limit:'50mb' }))
 
+app.use(express.static(path.join(__dirname, 'uploads')))
+
+app.get("/uploads/:img",function (req, res) {
+  res.sendFile(`${__dirname}/uploads/${req.params.img}`)
+});
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -52,7 +59,6 @@ const changeStream =Msg.watch()
 console.log('Database Is Now Running')
  
 changeStream.on('change', (change) => { 
-console.log(change);
   
 if(change.operationType==='insert'){ 
 
