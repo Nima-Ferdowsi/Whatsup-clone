@@ -36,6 +36,7 @@ router.post(
       .then((data) => {
         data[0].avatar = req.file.filename;
         data[0].save();
+        console.log('saved');
       })
       .then((data) => {
         res.status(200).send(req.file.filename);
@@ -51,7 +52,7 @@ router.post(
               data.markModified("users");
               data.save(function (err) {
                 if (err)
-                  res.status(500).send("there is an error from server sorry");
+                  res.status(500).send("could not save");
               });
             });
           });
