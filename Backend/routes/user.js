@@ -51,14 +51,17 @@ router.post(
               data.users[index].avatar = await req.file.filename;
               data.markModified("users");
               data.save(function (err) {
-                if (err)
+                if (err){
+                console.log(err);
                   res.status(500).send("could not save");
+                }
               });
             });
           });
         }
       })
       .catch((err) => {
+        console.log(err);
         res.status(500).send("there is an error from server sorry");
       });
   }

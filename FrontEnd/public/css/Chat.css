@@ -82,14 +82,24 @@ body {
 }
 .add-chat{
   background-color: rgb(20, 170, 155);
+
+}
+.add-chat:hover{
+  background-color: rgb(29, 117, 108);
+  color:white;
+}
+.back,.add-chat{
   color:white;
   position: fixed;
   bottom: 1vw;
   left: 5vw;
 }
-.add-chat:hover{
-  background-color: rgb(29, 117, 108);
-  color:white;
+.back{
+  background-color: rgb(170, 20, 20);
+}
+.back:hover{
+  background-color: rgb(112, 17, 17);
+
 }
 .sidebar-chats-info > h2 {
   font-size: 18px;

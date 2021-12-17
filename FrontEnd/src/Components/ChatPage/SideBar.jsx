@@ -10,18 +10,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { getRooms } from "./../../action/rooms";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import RemoveIcon from "@material-ui/icons/Remove";
+
 import { getUsers } from "./../../action/userList";
 import { server } from "../../config/config.json";
 import { getLocal } from "../../utils/localstorage";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { withStyles } from "@material-ui/core/styles";
-import ListItemText from '@material-ui/core/ListItemText';
-import SendIcon from '@material-ui/icons/Send';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import { withRouter } from 'react-router-dom';
+import ListItemText from "@material-ui/core/ListItemText";
+import SendIcon from "@material-ui/icons/Send";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import { withRouter } from "react-router-dom";
 import UploadModal from "./uploadAvatarModal";
 
 const login = (user) => {
@@ -53,9 +55,8 @@ const Sidebar = (props) => {
   const [myRooms, setMyRooms] = useState([]);
   const rooms = useSelector((state) => state.roomReducer);
   const users = useSelector((state) => state.userList);
-  const [openUpload,setUpload]=useState(false)
+  const [openUpload, setUpload] = useState(false);
   const dispatch = useDispatch();
-
 
   let avatar;
   //user that loged in that is in localstorage
@@ -70,7 +71,6 @@ const Sidebar = (props) => {
     //login when page loaded because users room shoud update
     if (user) {
       login({ email: user.result.email, pass: user.result.pass });
-
     }
   }, []);
 
@@ -82,17 +82,22 @@ const Sidebar = (props) => {
   }, [users]);
 
   useEffect(() => {
-setTimeout(() => {
-  const userData = getLocal("user");
-  const data = userData.result.room.map((elem) => {
-    const filtered = rooms.filter((item) => item.roomId === elem);
-    return filtered;
-  });
-  setMyRooms(data);
-}, 1000);
- 
+    setTimeout(() => {
+      const userData = getLocal("user");
+      const data = userData.result.room.map((elem) => {
+        const filtered = rooms.filter((item) => item.roomId === elem);
+        return filtered;
+      });
+      setMyRooms(data);
+    }, 1000);
   }, [rooms]);
 
+  let classes = "";
+  if (sidebarContentType === false) {
+    classes = "back";
+  } else {
+    classes = "";
+  }
   const StyledMenu = withStyles({
     paper: {
       border: "1px solid #d3d4d5",
@@ -133,10 +138,10 @@ setTimeout(() => {
     setAnchorEl(null);
   };
   //logout
-  const logout=()=>{
-    localStorage.removeItem('user')
-    props.history.push('/login')
-  }
+  const logout = () => {
+    localStorage.removeItem("user");
+    props.history.push("/login");
+  };
   return (
     <div className="sidebar" ref={props.sidebarRef}>
       <div className="sidebar-header">
@@ -165,7 +170,12 @@ setTimeout(() => {
                 </ListItemIcon>
                 <ListItemText primary="LOGOUT" />
               </StyledMenuItem>
-              <StyledMenuItem  onClick={()=>{setUpload(true) ; closeMenu()}}>
+              <StyledMenuItem
+                onClick={() => {
+                  setUpload(true);
+                  closeMenu();
+                }}
+              >
                 <ListItemIcon>
                   <SendIcon fontSize="small" />
                 </ListItemIcon>
@@ -208,13 +218,13 @@ setTimeout(() => {
         <Fab
           onClick={() => setSidebarContentType(!sidebarContentType)}
           aria-label="add"
-          className="add-chat"
+          className={`add-chat ${classes}`}
           ref={props.addChatBtn}
         >
-          <AddIcon />
+          {classes == "" ? <AddIcon /> : <RemoveIcon />}
         </Fab>
       </div>
-      <UploadModal open={openUpload} close={setUpload}/>
+      <UploadModal open={openUpload} close={setUpload} />
     </div>
   );
 };
