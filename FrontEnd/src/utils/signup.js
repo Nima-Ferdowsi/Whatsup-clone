@@ -6,8 +6,10 @@ import { server } from "../config/config.json";
 import { withRouter } from "react-router";
 import {toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useState } from 'react';
 
 const SignUpBtn = (props) => {
+  const [loading,setLoading]=useState(false)
   //states
   const firstname = useSelector((state) => state.firstname);
   const lastname = useSelector((state) => state.lastname);
@@ -22,6 +24,7 @@ const SignUpBtn = (props) => {
     newuser.lastname = lastname;
     newuser.email = email;
     newuser.pass = pass;
+    setLoading(true)
 
     fetch(`${server}/signin`, {
       method: "Post",
@@ -33,6 +36,7 @@ const SignUpBtn = (props) => {
     })
       .then((data) => data.json())
       .then((data) => {
+        setLoading(false)
         if (data.message == "succses") {
           props.history.push("/login");
         } else if (data.message == "exist") {
@@ -49,7 +53,7 @@ const SignUpBtn = (props) => {
       disabled={!isFormValid([firstname, lastname, email, pass])}
       onClick={signUp}
     >
-      Sign up
+   {loading? (<div class="spinner"></div>):null}     Sign up
     </button>
   );
 };

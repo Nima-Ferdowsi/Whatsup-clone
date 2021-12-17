@@ -10,18 +10,24 @@ import {server} from '../config/config.json'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { withRouter } from 'react-router-dom';
+import { useState } from 'react';
+
 const Login = (props) => {
   const dispatch=useDispatch()
   const email=useSelector(state=>state.email)
   const pass=useSelector(state=>state.pass)
 
+  const [loading,setLoading]=useState(false)
 
 
 const login=()=>{
+
   if(!email||!pass){
    toast.error("who are you ?! you have to fill the fields first  ")
   }
  else{
+  setLoading(true)
+
   fetch(`${server}/login`, {
     method: "Post",
     body: JSON.stringify({email,pass}),
@@ -32,6 +38,8 @@ const login=()=>{
     },    })
     .then((data) => data.json())
     .then((data) =>{
+      setLoading(false)
+
       if(data.status===200){
         toast.success('Welcome')
         localStorage.setItem('user',JSON.stringify(data))
@@ -104,7 +112,8 @@ dispatch(reset('email'))
           </label>
         </div>
         <button className="btn btn-lg btn-primary btn-block" disabled={!isFormValid([email,pass])} onClick={login}>
-          Sign in
+        {loading? (<div class="spinner"></div>):null} 
+Sign in
         </button>
      
           <Link to='/signup' className='sign_login_link mt-3 text-danger'>Dont Have AN Account?</Link>
