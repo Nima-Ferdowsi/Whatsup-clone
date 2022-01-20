@@ -36,7 +36,7 @@ router.post(
       .then((data) => {
         data[0].avatar = req.file.filename;
         data[0].save();
-        console.log('saved');
+        console.log("saved");
       })
       .then((data) => {
         res.status(200).send(req.file.filename);
@@ -51,8 +51,8 @@ router.post(
               data.users[index].avatar = await req.file.filename;
               data.markModified("users");
               data.save(function (err) {
-                if (err){
-                console.log(err);
+                if (err) {
+                  console.log(err);
                   res.status(500).send("could not save");
                 }
               });

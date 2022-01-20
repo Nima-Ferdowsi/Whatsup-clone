@@ -13,6 +13,8 @@ const ChatFooter = () => {
   const msg=useSelector(state=>state.chat)
   const user=getLocal('user')
 
+  const theme=useSelector((state)=>state.theme);
+
   //send message only if room selected 
 const sendMsg=(e)=>{
 
@@ -36,7 +38,7 @@ else{
     inputRef.current.value+=selection.emoji
   });
   return (
-    <div className="chat-footer">
+    <div className={`${theme.color} chat-footer`}>
         <InsertEmoticonIcon onClick={(e)=> picker.togglePicker(e.target)}/>
       <form onSubmit={(e)=>{sendMsg(e)}}>
           <input ref={inputRef} placeholder='Type a message'/>

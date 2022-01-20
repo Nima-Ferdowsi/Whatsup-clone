@@ -7,25 +7,26 @@ import SearchIcon from "@material-ui/icons/Search";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SideBarChats from "./SIdeBarChats";
 import { useSelector, useDispatch } from "react-redux";
-import { getRooms } from "./../../action/rooms";
+import { getRooms, newRooms } from "./../../Rx/action/rooms";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 
-import { getUsers } from "./../../action/userList";
+import { getUsers } from "./../../Rx/action/userList";
 import { server } from "../../config/config.json";
 import { getLocal } from "../../utils/localstorage";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { withStyles } from "@material-ui/core/styles";
 import ListItemText from "@material-ui/core/ListItemText";
 import SendIcon from "@material-ui/icons/Send";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { withRouter } from "react-router-dom";
 import UploadModal from "./uploadAvatarModal";
-
+import DropDown from "./../common/dropdown/DropDown";
+import DropDownItem from "./../common/dropdown/DropDownItem";
+import Switch from "@material-ui/core/Switch";
+import { changeTheme } from "./../../Rx/action/theme";
 const login = (user) => {
   fetch(`${server}/login`, {
     method: "Post",
@@ -48,14 +49,29 @@ const login = (user) => {
 };
 
 const Sidebar = (props) => {
-  //state to change content(true:user , false: rooms)
+  const theme = useSelector((state) => state.theme);
+
+  //state to change content(true:rooms , false: user)
   const [sidebarContentType, setSidebarContentType] = useState(true);
 
+  // userList state for all users except current user
   const [diffrentUsers, setDiffrent] = useState([]);
-  const [myRooms, setMyRooms] = useState([]);
+
+  // state for myrooms
+  const { myRooms, setMyRooms } = props;
+  console.log(myRooms);
+  // state for set myrooms
+
+  const [search, setSearch] = useState("");
+
+  // state for all rooms in the db
+
   const rooms = useSelector((state) => state.roomReducer);
+
   const users = useSelector((state) => state.userList);
+
   const [openUpload, setUpload] = useState(false);
+
   const dispatch = useDispatch();
 
   let avatar;
@@ -63,7 +79,7 @@ const Sidebar = (props) => {
   const user = getLocal("user");
 
   useEffect(async () => {
-    //get rooms
+    //get all rooms in DB
     await dispatch(getRooms());
     //get users
     await dispatch(getUsers());
@@ -82,6 +98,7 @@ const Sidebar = (props) => {
   }, [users]);
 
   useEffect(() => {
+    //show me my rooms
     setTimeout(() => {
       const userData = getLocal("user");
       const data = userData.result.room.map((elem) => {
@@ -89,45 +106,68 @@ const Sidebar = (props) => {
         return filtered;
       });
       setMyRooms(data);
-    }, 1000);
+    }, 1);
   }, [rooms]);
+  const searchRooms = () => {
+    if (
+      typeof myRooms[0] !== "undefined" &&
+      myRooms[0].length > 0 &&
+      typeof myRooms[0][0].users !== "undefined"
+    ) {
+      if (search != "") {
+        const storage = JSON.parse(localStorage.getItem("user"));
 
-  let classes = "";
+        let f = [];
+        myRooms.map((elem) => {
+          console.log(elem);
+          const index = elem[0].users.findIndex(
+            (elem) => elem.id !== storage.result._id
+          );
+          if (elem[0].users[index].user.includes(search)) {
+            f.push(elem);
+          }
+        });
+        setMyRooms(f);
+      }
+    }
+    if (search == "") {
+      console.log("hi");
+      const userData = getLocal("user");
+      const data = userData.result.room.map((elem) => {
+        const filtered = rooms.filter((item) => item.roomId === elem);
+        return filtered;
+      });
+      setMyRooms(data);
+    }
+  };
+  useEffect(() => {
+    if (sidebarContentType == true) {
+      searchRooms();
+    } else {
+      if (search != "") {
+        const data = diffrentUsers.filter((elem) =>
+          elem.firstname.includes(search)
+        );
+
+        setDiffrent(data);
+      } else {
+        const me = user.result._id;
+        const otherUsers = users.filter((elem) => elem._id !== me);
+        setDiffrent(otherUsers);
+      }
+    }
+  }, [search]);
+
+  console.log(myRooms);
+  console.log(diffrentUsers);
+
+  let fabClass = "";
   if (sidebarContentType === false) {
-    classes = "back";
+    fabClass = "back";
   } else {
-    classes = "";
+    fabClass = "";
   }
-  const StyledMenu = withStyles({
-    paper: {
-      border: "1px solid #d3d4d5",
-    },
-  })((props) => (
-    <Menu
-      elevation={0}
-      getContentAnchorEl={null}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "center",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "center",
-      }}
-      {...props}
-    />
-  ));
 
-  const StyledMenuItem = withStyles((theme) => ({
-    root: {
-      "&:focus": {
-        backgroundColor: theme.palette.primary.main,
-        "& .MuiListItemIcon-root, & .MuiListItemText-primary": {
-          color: theme.palette.common.white,
-        },
-      },
-    },
-  }))(MenuItem);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const openMenu = (event) => {
@@ -144,33 +184,39 @@ const Sidebar = (props) => {
   };
   return (
     <div className="sidebar" ref={props.sidebarRef}>
-      <div className="sidebar-header">
+      <div className={`${theme.color} sidebar-header`}>
         <Avatar src={`${server}/uploads/${user.result.avatar}`} />
         <div className="header-right">
-          <IconButton>
+          <Switch
+            checked={theme.switch}
+            onChange={() => dispatch(changeTheme())}
+            name="checkedA"
+            inputProps={{ "aria-label": "secondary checkbox" }}
+          />
+          <IconButton className={theme.color}>
             <DonutLargeIcon />
           </IconButton>
 
-          <IconButton>
+          <IconButton className={theme.color}>
             <ChatIcon />
           </IconButton>
 
-          <IconButton>
-            <MoreVertIcon onClick={openMenu} />
-            <StyledMenu
+          <IconButton className={theme.color} style={{ position: "relative" }}>
+            <MoreVertIcon style={{ position: "absolute" }} onClick={openMenu} />
+            <DropDown
               id="customized-menu"
               anchorEl={anchorEl}
               keepMounted
               open={Boolean(anchorEl)}
               onClose={closeMenu}
             >
-              <StyledMenuItem onClick={logout}>
+              <DropDownItem onClick={logout}>
                 <ListItemIcon>
                   <SendIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="LOGOUT" />
-              </StyledMenuItem>
-              <StyledMenuItem
+              </DropDownItem>
+              <DropDownItem
                 onClick={() => {
                   setUpload(true);
                   closeMenu();
@@ -180,21 +226,25 @@ const Sidebar = (props) => {
                   <SendIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="Avatar" />
-              </StyledMenuItem>
-            </StyledMenu>
+              </DropDownItem>
+            </DropDown>
           </IconButton>
         </div>
       </div>
 
-      <div className="sidebar-search">
-        <div className="sidebar-search-container">
-          <SearchIcon />
-          <input type="text" placeholder="search or start new chat" />
+      <div className={`${theme.color} sidebar-search`}>
+        <div className={`${theme.color} sidebar-search-container `}>
+          <SearchIcon className={theme.color} />
+          <input
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="search or start new chat"
+          />
         </div>
       </div>
 
-      <div className="sidebar-chats">
-        {sidebarContentType === true
+      <div className={` ${theme.color} sidebar-chats`}>
+        {sidebarContentType
           ? myRooms.map((elem) => {
               return (
                 <SideBarChats
@@ -218,10 +268,10 @@ const Sidebar = (props) => {
         <Fab
           onClick={() => setSidebarContentType(!sidebarContentType)}
           aria-label="add"
-          className={`add-chat ${classes}`}
+          className={`add-chat ${fabClass}`}
           ref={props.addChatBtn}
         >
-          {classes == "" ? <AddIcon /> : <RemoveIcon />}
+          {fabClass == "" ? <AddIcon /> : <RemoveIcon />}
         </Fab>
       </div>
       <UploadModal open={openUpload} close={setUpload} />

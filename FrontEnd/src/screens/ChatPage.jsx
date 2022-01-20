@@ -2,11 +2,15 @@ import React, { Fragment, useRef, useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { Redirect } from "react-router";
 import { getLocal } from "../utils/localstorage";
-import Chat from "./ChatPage/Chat";
-import Sidebar from "./ChatPage/SideBar";
+import Chat from "../Components/ChatPage/Chat";
+import Sidebar from "../Components/ChatPage/SideBar";
+import { useSelector } from 'react-redux';
 
 const ChatPage = () => {
+  const theme = useSelector((state) => state.theme);
 
+  // state for myrooms
+  const [myRooms, setMyRooms] = useState([]);
   //window width
   const [getWidth, setWidth] = useState(window.innerWidth);
   const user=getLocal('user')
@@ -22,11 +26,14 @@ const ChatPage = () => {
     addChatBtn.current.style.display='block'
   };
   const closeChat = () => {
-    chatRef.current.style.left = "1000px";
-    chatRef.current.style.flex = "0";
-
-    chatRef.current.style.width = "0vw";
-    openChatList();
+    
+    if (getWidth <= 700) {
+      chatRef.current.style.left = "1000px";
+      chatRef.current.style.flex = "0";
+  
+      chatRef.current.style.width = "0vw";
+      openChatList();
+    }
   };
 
   const closeChatList = () => {
@@ -92,10 +99,12 @@ return (
   <Fragment>
     <Helmet>
       <link rel="stylesheet" href="/css/Chat.css" />
+      <link rel="stylesheet" href="/css/darkmode.css" />
+
     </Helmet>
-    <div className="chat-container">
-      <Sidebar sidebarRef={chatListRef} addChatBtn={addChatBtn} openChat={openChat} />
-      <Chat chatRef={chatRef} closeChat={closeChat} />
+    <div className={`${theme.color} chat-container`}>
+      <Sidebar myRooms={myRooms} setMyRooms={setMyRooms} sidebarRef={chatListRef} addChatBtn={addChatBtn} openChat={openChat} />
+      <Chat  closeChat={closeChat} myRooms={myRooms}  chatRef={chatRef} setMyRooms={setMyRooms}  closeChat={closeChat} />
       
     </div>
   </Fragment>

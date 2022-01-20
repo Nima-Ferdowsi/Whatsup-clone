@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { newUser } from "../action/user";
+import { newUser } from "../../Rx/action/user";
 import { isFormValid } from "./formvalid";
 import { User } from "./User";
-import { server } from "../config/config.json";
+import { server } from "../../config/config.json";
 import { withRouter } from "react-router";
 import {toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 const SignUpBtn = (props) => {
   const [loading,setLoading]=useState(false)
+
   //states
   const firstname = useSelector((state) => state.firstname);
   const lastname = useSelector((state) => state.lastname);
@@ -17,9 +18,19 @@ const SignUpBtn = (props) => {
   const pass = useSelector((state) => state.pass);
 
   const dispatch = useDispatch();
+const validateEmail = (email) =>{
+  return email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+};
 
   const signUp = async () => {
-    const newuser = new User();
+   if(isFormValid([firstname,lastname,email,pass])){
+    if(!validateEmail(email)){
+      toast.error("thats not real email")
+  
+     }
+   else{ const newuser = new User();
     newuser.firstname = firstname;
     newuser.lastname = lastname;
     newuser.email = email;
@@ -46,6 +57,10 @@ const SignUpBtn = (props) => {
       .catch((err) => toast.error(err));
 
     await dispatch(newUser(newuser));
+   }}
+   else{
+     toast.error("please fill all fields")
+   }
   };
   return (
     <button

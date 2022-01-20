@@ -1,6 +1,9 @@
 import { server} from "../config/config.json";
+
 export const reciverInfo = (type,list,props) => {
      //return contact name from array
+     // list parameter is the room info that containes
+     console.log(list)
  if(props.types!='users'){
   if(typeof list[0] !=='undefined'){
     const storage = JSON.parse(localStorage.getItem("user"));
@@ -8,6 +11,7 @@ export const reciverInfo = (type,list,props) => {
       (elem) => elem.id !== storage.result._id
     );
 
+    console.log(list[0])
 
    switch (type) {
      case 'name':

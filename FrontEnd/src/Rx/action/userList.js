@@ -1,4 +1,6 @@
-import {server} from '../config/config.json'
+import {server} from '../../config/config.json'
+
+// get all users 
 
 export const getUsers = () => {
   return async (dispatch) => {

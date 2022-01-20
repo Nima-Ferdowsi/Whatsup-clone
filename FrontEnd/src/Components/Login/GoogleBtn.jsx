@@ -1,5 +1,5 @@
 import React,{useEffect} from "react";
-import { changeEmail, changeFirst, changeLast } from "../action/user";
+import { changeEmail, changeFirst, changeLast } from "../../Rx/action/user";
 import { useDispatch } from 'react-redux';
 
 const GoogleBtn = (props) => {

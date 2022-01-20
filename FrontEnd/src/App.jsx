@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import { Route, Switch } from 'react-router';
-import Login from './Components/Login.jsx';
-import Signup from './Components/Signup.jsx';
-import ChatPage from './Components/ChatPage';
+import Login from './screens/Login.jsx';
+import Signup from './screens/Signup.jsx'; 
+import ChatPage from './screens/ChatPage';
 import { ToastContainer } from 'react-toastify';
 
 

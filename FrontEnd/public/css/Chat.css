@@ -6,6 +6,7 @@ body {
   place-items: center;
   height: 100vh;
   background-color: #dadbd3;
+
 }
 .chat-container {
   position: relative;
@@ -14,8 +15,9 @@ body {
   margin-top: 2px;
   height: 100vh;
   border: 1;
-  background-color: #ededed;
-  box-shadow: -1px 4px 20px -6px rgba(0, 0, 0, 0.75);
+   background-color: #ededed;
+
+ box-shadow: -1px 4px 20px -6px rgba(0, 0, 0, 0.75);
 }
 /* SIDEBAR */
 .sidebar {
@@ -118,6 +120,7 @@ body {
   position: relative;
   overflow-x: hidden;
   left: 0;
+  overflow: hidden;
 }
 
 .chat-header {
@@ -231,6 +234,9 @@ body {
     z-index:100;
     width: 100%;
   
+  }
+  .chat-header-right{
+    transform: translateX(-10px);
   }
   .chat-header-info > h3 {
     font-size:16px;

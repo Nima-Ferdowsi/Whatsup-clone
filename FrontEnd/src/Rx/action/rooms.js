@@ -1,5 +1,7 @@
-import { server } from "../config/config.json";
-import { getLocal } from './../utils/localstorage';
+import { server } from "../../config/config.json"
+import { getLocal } from '../../utils/localstorage';
+
+//get all rooms
 export const getRooms = () => {
   return async (dispatch) => {
     const req = await fetch(`${server}/rooms/get_all`);
@@ -8,6 +10,7 @@ export const getRooms = () => {
   };
 };
 
+//create new room
 export const newRooms = (user) => {
   return async (dispatch,getState) => {
 
@@ -33,6 +36,7 @@ const rooms=getState().roomReducer
       localStorage.setItem('user',JSON.stringify(local))
   };
 };
+
 
 
 

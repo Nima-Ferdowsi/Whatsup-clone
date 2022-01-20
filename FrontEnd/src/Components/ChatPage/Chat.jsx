@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
@@ -12,14 +12,29 @@ import { useDispatch } from "react-redux";
 import { Fragment } from "react";
 import { getLocal } from "../../utils/localstorage";
 import Pusher from "pusher-js";
-import { getChat } from "./../../action/chat";
 import { server } from "../../config/config.json";
+import { getChat, clearChatState } from "./../../Rx/action/chat";
+import DropDown from "./../common/dropdown/DropDown";
+import DropDownItem from "./../common/dropdown/DropDownItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import SendIcon from "@material-ui/icons/Send";
+
 const Chat = (props) => {
   const msg = useSelector((state) => state.chat);
+ const theme=useSelector((state)=>state.theme);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { myRooms, setMyRooms } = props;
+  const openMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-   const chatRef=useRef(null)
+  const closeMenu = () => {
+    setAnchorEl(null);
+  };
+  const chatRef = useRef(null);
 
-//get login user id
+  //get login user id
   const userID = getLocal("user").result._id;
 
   const dispatch = useDispatch();
@@ -28,7 +43,7 @@ const Chat = (props) => {
   let avatar;
   if (typeof msg.contact !== "undefined") {
     name = msg.contact.user;
-    avatar=msg.contact.avatar;
+    avatar = msg.contact.avatar;
   } else {
     name = "Room";
   }
@@ -42,19 +57,16 @@ const Chat = (props) => {
     messages = [];
   }
 
-
   useEffect(() => {
     var pusher = new Pusher("f1aaf06bf13b9df96407", {
       cluster: "eu",
     });
 
     var channel = pusher.subscribe("Message");
-    channel.bind("inserted",  ()=> {
-
+    channel.bind("inserted", () => {
       dispatch(getChat(msg.room, msg.contact, msg.room));
     });
-   channel.bind("deleted",  ()=> {
-
+    channel.bind("deleted", () => {
       dispatch(getChat(msg.room, msg.contact, msg.room));
     });
     return () => {
@@ -63,20 +75,50 @@ const Chat = (props) => {
     };
   }, [msg]);
 
+  const Removeroom = async () => {
+    const req = await fetch(`${server}/rooms/delete-room`, {
+      method: "POST",
+      body: JSON.stringify({ roomId: msg.room }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        dispatch(clearChatState());
+        const data = myRooms.filter((elem) => elem[0].roomId !== msg.room);
+        setMyRooms(data);
+        props.closeChat()
+        closeMenu()
+      })
+      .catch((err) => console.log(err));
+  };
   //message text type:(reciver or sender)
   const cheackMessage = (elem) => {
     if (userID === elem.messages.from.id) {
       return (
-        <ChatMessage id={elem._id} messageClass="chat-reciever" txt={elem.messages.txt} name={elem.messages.from.name}/>
+        <ChatMessage
+          id={elem._id}
+          messageClass="chat-reciever"
+          txt={elem.messages.txt}
+          name={elem.messages.from.name}
+        />
       );
     } else {
-      return <ChatMessage id={elem._id}  txt={elem.messages.txt} name={elem.messages.from.name}/>;
+      return (
+        <ChatMessage
+          id={elem._id}
+          txt={elem.messages.txt}
+          name={elem.messages.from.name}
+        />
+      );
     }
   };
 
   return (
     <div className="chat" ref={props.chatRef}>
-      <div className="chat-header">
+      <div className={` ${theme.color} chat-header`}>
         <div className="back-icon">
           <ArrowBackIcon onClick={props.closeChat} />
         </div>
@@ -86,20 +128,37 @@ const Chat = (props) => {
           <p>last seean at...</p>
         </div>
         <div className="chat-header-right">
-          <IconButton>
+          <IconButton className={theme.color}>
             <SearchIcon />
           </IconButton>
 
-          <IconButton>
+          <IconButton className={theme.color}>
             <AttachFileIcon />
           </IconButton>
 
-          <IconButton>
-            <MoreVertIcon />
+          <IconButton className={theme.color} style={{position:'relative'}}>
+            <MoreVertIcon style={{position:'absolute'}} onClick={openMenu} />
+            <DropDown
+              id="customized-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={closeMenu}
+            >
+              <DropDownItem
+                style={{ backgroundColor: "red" }}
+                onClick={() => Removeroom()}
+              >
+                <ListItemIcon>
+                  <SendIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Delete Chat" />
+              </DropDownItem>
+            </DropDown>
           </IconButton>
         </div>
       </div>
-      <div className="chat-body" ref={chatRef}>
+      <div className={`${theme.color} chat-body `} ref={chatRef}>
         {typeof msg.contact !== "undefined" ? (
           <Fragment>{messages.map((elem) => cheackMessage(elem))}</Fragment>
         ) : null}
