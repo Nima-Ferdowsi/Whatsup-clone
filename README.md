@@ -6,7 +6,7 @@ and mongodb as database
 and I used pusher for real time feautre
 
  <img src="/img/Screenshot (47).png" style=" width:100% ; height:100% "  >
-  <img src="/img/Screenshot (46).png" style=" width:100% ; height:100% "  >
+  <img src="/img/Screenshot (46).png" style=" width:50% ; height:50% "  >
 
 
 ## Note
