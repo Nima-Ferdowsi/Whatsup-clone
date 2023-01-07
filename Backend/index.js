@@ -5,6 +5,8 @@ const room = require('./routes/room');
 const mongoose=require('mongoose');
 const Pusher=require('pusher');
 const path=require('path');
+var cors = require('cors')
+
 
 const connectDb = require('./database/db');
 const Room = require('./model/room');
@@ -14,6 +16,8 @@ const bodyParser = require('body-parser');
 
 
 const app=express()
+app.use(cors())
+
 dotEnv.config({path:'./config/config_env.env'})
 
 
@@ -88,7 +92,7 @@ app.use(room)
 //End of Routes
 
 //Database(connect to database)
-connectDb(process.env.CLUSTER_URI)
+connectDb(process.env.TEST_CLUSTER)
 //End of database
  
 const Port=process.env.PORT||5000
