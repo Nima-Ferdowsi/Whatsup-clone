@@ -1,0 +1,53 @@
+.dark.sidebar-header {
+  background-color: #222e37;
+  border-color: #222e37;
+  color: wheat;
+}
+.dark.MuiButtonBase-root,
+.dark.MuiSvgIcon-root {
+  color: rgb(253, 250, 250);
+}
+.dark.sidebar-chats {
+  background-color: #111f27;
+}
+
+.dark.sidebar-chats-info h2 {
+  color: white;
+}
+.dark.sidebar-chats-info p {
+  color: white;
+}
+.dark.sidebarChat {
+  border: none;
+}
+.dark.sidebarChat:hover {
+  background-color: #121c22;
+}
+.dark.sidebar-search,
+.dark.sidebar-search-container,
+.dark.sidebar-search-container > input {
+  background-color: #222e37;
+  color: white;
+}
+.dark.sidebar-search-container > input::placeholder {
+  color: white;
+}
+.dark.chat-body{
+    background-image: url("../img/8793b7f3009c87baf350de82a5f72423.jpg");
+
+}
+.dark.chat-header{
+    background-color: #222e37;
+    border-bottom: none;
+    color: white;
+
+}
+.dark.chat-footer ,.dark.chat-footer >form> input{
+    background-color: #222e37;
+    border-top: none;
+    color: white;
+
+}
+.dark.chat-footer >form> input::placeholder{
+    color: white;
+}
